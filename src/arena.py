@@ -195,7 +195,7 @@ def cross_train_iteration(hosts, pathogens, host_type_selector, epochs=1, timer=
                 
         
         #EVO -- debug
-        dump_test(['1/ INITIALLY'])
+        dump_test(['1/2 - INITIALLY INSIDE CROSS_TRAIN_ITERATION'])
         dump_test(['DISCRIMINATOR INDEX:', host_no, 'WITH RANDOM TAG:', host.random_tag, 'WIN RATE:', host.win_rate,\
                    'CURRENT FITNESS:', host.current_fitness, 'SKILL RATING TABLE:', host.skill_rating_games,\
                    'AND GEN ERROR MAP:', host.gen_error_map,\
@@ -206,6 +206,7 @@ def cross_train_iteration(hosts, pathogens, host_type_selector, epochs=1, timer=
                    ' AND GEN FITNESS MAP: ', pathogen.fitness_map,\
                     'TAG TRACE: ', pathogen.tag_trace, 'UNIQUE KEY:', pathogen.key])
         
+        dump_test([''])
         
         arena.sample_images()
 
@@ -220,7 +221,6 @@ def cross_train_iteration(hosts, pathogens, host_type_selector, epochs=1, timer=
                     host_no,
                     arena.discriminator_instance.random_tag, arena.discriminator_instance.current_fitness,\
                     arena.discriminator_instance.state])
-        
         
         
         
@@ -285,7 +285,7 @@ def cross_train_iteration(hosts, pathogens, host_type_selector, epochs=1, timer=
     
     
     #EVO -- debug/test loop only
-    dump_test(['2/ AFTER TWO SKILL RATING UPDATES IN CROSS_TRAIN_ITERATION'])
+    dump_test(['2/2 - AFTER LAST UPDATE IN CROSS_TRAIN_ITERATION'])
     
     for host in hosts[host_type_selector]:        
         dump_test(['DISCRIMINATOR WITH RANDOM TAG: ', host.random_tag, ' WIN RATE: ', host.win_rate,\
@@ -300,6 +300,8 @@ def cross_train_iteration(hosts, pathogens, host_type_selector, epochs=1, timer=
                     'TAG TRACE: ', pathogen.tag_trace, 'UNIQUE KEY:', pathogen.key])
     
     
+    dump_test([''])
+    dump_test([''])
     
     for host in hosts[host_type_selector]:
         print('host', host.random_tag, host.current_fitness, host.gen_error_map)
@@ -342,7 +344,7 @@ def round_robin_iteration(hosts, pathogens, host_type_selector, epochs=1,
         generator = generator_list*repeats
 
     
-    dump_test(['1/ INITIALLY IN ROUND ROBIN ITERATION'])
+    dump_test(['1/2 - INITIALLY IN ROUND_ROBIN_ITERATION'])
     
     for host in hosts[host_type_selector]:        
         dump_test(['DISCRIMINATOR WITH RANDOM TAG: ', host.random_tag, ' WIN RATE: ', host.win_rate,\
@@ -356,6 +358,7 @@ def round_robin_iteration(hosts, pathogens, host_type_selector, epochs=1,
                    ' AND GEN FITNESS MAP: ', pathogen.fitness_map,\
                     'TAG TRACE: ', pathogen.tag_trace, 'UNIQUE KEY:', pathogen.key])
     
+    dump_test([''])
     
     for host_no, pathogen_no in generator:
 
@@ -448,7 +451,7 @@ def round_robin_iteration(hosts, pathogens, host_type_selector, epochs=1,
     update_fitnesses(pathogens)
     
     
-    dump_test(['2/ LASTLY IN ROUND ROBIN ITERATION'])
+    dump_test(['2/2 - AFTER LASR UPDATE IN ROUND_ROBIN_ITERATION'])
     
     for host in hosts[host_type_selector]:        
         dump_test(['DISCRIMINATOR WITH RANDOM TAG: ', host.random_tag, ' WIN RATE: ', host.win_rate,\
@@ -461,7 +464,9 @@ def round_robin_iteration(hosts, pathogens, host_type_selector, epochs=1,
                    ' CURRENT FITNESS: ', pathogen.current_fitness, ' SKILL RATING TABLE: ', pathogen.skill_rating_games,\
                    ' AND GEN FITNESS MAP: ', pathogen.fitness_map,\
                     'TAG TRACE: ', pathogen.tag_trace, 'UNIQUE KEY:', pathogen.key])
-        
+    
+    dump_test([''])
+    dump_test([''])
     
     for host in hosts[host_type_selector]:
         print('host', host.random_tag, host.current_fitness, host.gen_error_map)
@@ -604,20 +609,7 @@ def homogenus_chain_progression(individuals_per_species, starting_cluster):
 def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit_reset=False,
                          timer=None):
 
-    
-    #EVO -- not used because now we have a current_fitness attribute for the generator too
-    '''
-    def pathogen_fitness_retriever(pathogen):
-        fitness = 1500 #used to be 0.05                  #EVO
-        try:
-            #fitness = max(pathogen.fitness_map.values()) #as we do now, we extract the maximum
-            fitness = pathogen.current_fitness           #EVO (or pathogen.skill_rating.mu)
-        except ValueError:
-            pass
-
-        return fitness
-    '''
-    
+        
     
     dump_trace(['>>>', 'evolve_in_population',
                 [host.random_tag for host in hosts_list],
@@ -697,7 +689,7 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
         
         
         #EVO -- debug
-        dump_test(['1/ INSIDE EVOLVE IN POP, AFTER FIRST SKILL RATING UPDATE'])
+        dump_test(['1/3 - INSIDE EVOLVE IN POP, AFTER FIRST SKILL RATING UPDATE'])
         dump_test(['DISCRIMINATOR INDEX: ', current_host_idx, ' WITH RANDOM TAG: ', hosts_list[current_host_idx].random_tag,\
                     ' WIN RATE: ', hosts_list[current_host_idx].win_rate, ' CURRENT FITNESS:',\
                     hosts_list[current_host_idx].current_fitness, ' SKILL RATING TABLE: ',\
@@ -713,7 +705,7 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
                     'TAG TRACE: ', pathogens_list[current_pathogen_idx].tag_trace,\
                     pathogens_list[current_pathogen_idx].key])
         
-        
+        dump_test([''])
         
         print("%s: real_err: %s, gen_err: %s; updated fitnesses: host: %s path: %s" % (
             arena.generator_instance.random_tag,
@@ -732,7 +724,10 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
 
         
         #EVO
-        if arena.generator_instance.current_fitness > 1100:
+        if arena.generator_instance.current_fitness > 1000 and\
+            arena.generator_instance.current_fitness + 400 > arena.discriminator_instance.current_fitness:
+            #For an infection to take place we need a minimum pathogen fitness of 1000 (otherwise considered too weak),
+            #and a difference in fitness between pathogen and host, for the latter to be infected, of maximum 400.
             
             
             #infection
@@ -750,9 +745,8 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
 
             #EVO
             if arena.discriminator_instance.current_fitness > arena.generator_instance.current_fitness + 150:
+            #We consider the infection silent if the difference in fitness is more than 150, otherwise (if less) full.
             
-            #or arena.generator_instance.current_fitness < 1400:
-            #or arena.discriminator_instance.real_error > 0.2
                 
                 #EVO
                 arena.generator_instance.coadaptation = True
@@ -803,9 +797,7 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
                         current_host_idx,
                         arena.discriminator_instance.random_tag, arena.discriminator_instance.current_fitness,\
                         arena.discriminator_instance.state])
-            
-            
-            
+                        
             
             
             
@@ -859,11 +851,11 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
             pathogen_sweeps(arena.generator_instance)
             host_sweeps(arena.discriminator_instance)
             
-            '''
-            #instead of the one we excluded for consistency reasons
-            update_fitnesses([hosts_list[current_host_idx]])
-            update_fitnesses([pathogens_list[current_pathogen_idx]])
-            '''
+            
+#             #instead of the one we excluded for consistency reasons
+#             update_fitnesses([hosts_list[current_host_idx]])
+#             update_fitnesses([pathogens_list[current_pathogen_idx]])
+            
             
             #EVO
             hosts_fitnesses[current_host_idx] = arena.discriminator_instance.current_fitness
@@ -871,16 +863,6 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
 
 
             
-            '''
-            try:
-                #pathogens_fitnesses[current_pathogen_idx] = max(
-                    #arena.generator_instance.fitness_map.values())      
-            
-                pathogens_fitnesses[current_pathogen_idx] = arena.generator_instance.skill_rating.mu
-            except ValueError:
-                pathogens_fitnesses[current_pathogen_idx] = 100         
-
-            '''    
             
             dump_trace(['infection failed, current host state:',
                         host_idx_2_pathogens_carried[current_host_idx],
@@ -939,7 +921,7 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
     
     
     #EVO -- debug loop
-    dump_test(['2/ AFTER INFECTION PART AND FINAL CROSS MATCH'])
+    dump_test(['2/3 - AFTER THE WHOLE INFECTION PROCESS AND ITS FINAL CROSS MATCH'])
     for (host_no, host) in enumerate(hosts_list):
         dump_test(['DISCRIMINATOR INDEX: ', host_no, ' WITH RANDOM TAG: ', host.random_tag, ' WIN RATE: ', host.win_rate,\
                    ' CURRENT FITNESS: ', host.current_fitness, ' SKILL RATING TABLE: ', host.skill_rating_games,\
@@ -953,6 +935,8 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
                     'TAG TRACE: ', pathogen.tag_trace, 'UNIQUE KEY:', pathogen.key])
                     
 
+    dump_test([''])
+    
     #EVO
     update_fitnesses(hosts_list)
     update_fitnesses(pathogens_list)
@@ -962,7 +946,8 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
     
     
     #EVO -- debug loop
-    dump_test(['3/ LAST UPDATE IN EVOLVE IN POP'])
+    dump_test(['3/3 - AFTER LAST UPDATE IN EVOLVE IN POP'])
+    
     for (host_no, host) in enumerate(hosts_list):
         dump_test(['DISCRIMINATOR INDEX: ', host_no, ' WITH RANDOM TAG: ', host.random_tag, ' WIN RATE: ', host.win_rate,\
                    ' CURRENT FITNESS: ', host.current_fitness, ' SKILL RATING TABLE: ', host.skill_rating_games,\
@@ -974,6 +959,9 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
                    ' CURRENT FITNESS: ', pathogen.current_fitness, ' SKILL RATING TABLE: ', pathogen.skill_rating_games,\
                    ' AND GEN FITNESS MAP: ', pathogen.fitness_map,\
                     'TAG TRACE: ', pathogen.tag_trace, 'UNIQUE KEY:', pathogen.key])
+    
+    dump_test([''])
+    dump_test([''])
     
     
     for host in hosts_list:
@@ -995,16 +983,40 @@ def chain_evolve(individuals_per_species, starting_cluster):
     default_budget = individuals_per_species*starting_cluster
 
     timer = StopWatch()
+    #only base
     
-    dump_evo(['*********************** FIRST CROSS TRAIN AND EVOLVE IN POP RESULTS *****************************'])
-    cross_train_iteration(hosts, pathogens, 'light', 5, timer=timer)
-    evolve_in_population(hosts['light'], pathogens, default_budget, timer=timer)
-    dump_evo(['*********************** SECOND CROSS TRAIN AND EVOLVE IN POP RESULTS *****************************'])
-    cross_train_iteration(hosts, pathogens, 'PreLU', 5, timer=timer)
-    evolve_in_population(hosts['PreLU'], pathogens, default_budget, timer=timer)
-    dump_evo(['*********************** THIRD CROSS TRAIN AND EVOLVE IN POP RESULTS *****************************'])
-    cross_train_iteration(hosts, pathogens, 'base', 10, timer=timer)
+    dump_evo([''])
+    cross_train_iteration(hosts, pathogens, 'base', 5, timer=timer)
+    
     evolve_in_population(hosts['base'], pathogens, default_budget, timer=timer)
+    dump_evo([''])
+    evolve_in_population(hosts['base'], pathogens, default_budget, timer=timer)
+    dump_evo([''])
+    evolve_in_population(hosts['base'], pathogens, default_budget, timer=timer)
+    dump_evo([''])
+    
+    
+    
+    
+    #cross_train_iteration(hosts, pathogens, 'base', 5, timer=timer)
+    
+    
+    #cross_train_iteration(hosts, pathogens, 'base', 5, timer=timer)
+    
+    
+    
+    
+    
+    
+#     dump_evo(['*********************** FIRST CROSS TRAIN AND EVOLVE IN POP RESULTS *****************************'])
+#     cross_train_iteration(hosts, pathogens, 'light', 5, timer=timer)
+#     evolve_in_population(hosts['light'], pathogens, default_budget, timer=timer)
+#     dump_evo(['*********************** SECOND CROSS TRAIN AND EVOLVE IN POP RESULTS *****************************'])
+#     cross_train_iteration(hosts, pathogens, 'PreLU', 5, timer=timer)
+#     evolve_in_population(hosts['PreLU'], pathogens, default_budget, timer=timer)
+#     dump_evo(['*********************** THIRD CROSS TRAIN AND EVOLVE IN POP RESULTS *****************************'])
+#     cross_train_iteration(hosts, pathogens, 'base', 10, timer=timer)
+#     evolve_in_population(hosts['base'], pathogens, default_budget, timer=timer)
     
     
     #EVO -- bottleneck_effect function test -- works as expected
@@ -1091,7 +1103,7 @@ def brute_force_training(restarts, epochs):
     pathogens = spawn_pathogen_population(restarts)
     
     
-    dump_test(['1/ INITIALLY IN BRUTE FORCE TRAINING'])
+    dump_test(['1/2 - INITIALLY IN BRUTE FORCE TRAINING'])
     
     for host in hosts:
         dump_test(['DISCRIMINATOR WITH RANDOM TAG: ', host.random_tag, ' WIN RATE: ', host.win_rate,\
@@ -1134,8 +1146,6 @@ def brute_force_training(restarts, epochs):
                     pathogen_no,
                     arena.generator_instance.random_tag,
                     current_fid, current_is, arena.generator_instance.current_fitness, arena.generator_instance.state])
-
-        
         
         
         #EVOOOOOOOOOOOO
@@ -1143,9 +1153,6 @@ def brute_force_training(restarts, epochs):
                     host_no,
                     arena.discriminator_instance.random_tag, arena.discriminator_instance.current_fitness,\
                     arena.discriminator_instance.state])
-        
-        
-        
         
         
         timer.start()
@@ -1166,21 +1173,6 @@ def brute_force_training(restarts, epochs):
         print("%s: real_err: %s, gen_err: %s" % (
             arena.generator_instance.random_tag,
             arena_match_results[0], arena_match_results[1]))
-
-    
-    dump_test(['2/ AFTER BRUTE FORCE LOOP IN BRUTE FORCE TRAINING'])
-    
-    for host in hosts:
-        dump_test(['DISCRIMINATOR WITH RANDOM TAG: ', host.random_tag, ' WIN RATE: ', host.win_rate,\
-                   ' CURRENT FITNESS: ', host.current_fitness, ' SKILL RATING TABLE: ', host.skill_rating_games,\
-                   ' AND GEN ERROR MAP: ', host.gen_error_map,\
-                    'TAG TRACE: ', host.tag_trace, 'UNIQUE KEY:', host.key])
-    
-    for pathogen in pathogens:
-        dump_test(['GENERATOR INDEX WITH RANDOM TAG: ', pathogen.random_tag, ' WIN RATE: ', pathogen.win_rate,\
-                   ' CURRENT FITNESS: ', pathogen.current_fitness, ' SKILL RATING TABLE: ', pathogen.skill_rating_games,\
-                   ' AND GEN FITNESS MAP: ', pathogen.fitness_map,\
-                    'TAG TRACE: ', pathogen.tag_trace, 'UNIQUE KEY:', pathogen.key])
     
     
 
@@ -1189,7 +1181,7 @@ def brute_force_training(restarts, epochs):
     update_fitnesses(pathogens) 
     
     
-    dump_test(['3/ LASTLY IN BRUTE FORCE TRAINING (AFTER SKILL RATING UPDATE)'])
+    dump_test(['2/2 - LASTLY IN BRUTE FORCE TRAINING (AFTER UNIQUE SKILL RATING UPDATE)'])
     
     for host in hosts:
         dump_test(['DISCRIMINATOR WITH RANDOM TAG: ', host.random_tag, ' WIN RATE: ', host.win_rate,\
@@ -1346,123 +1338,145 @@ if __name__ == "__main__":
     run_start = datetime.now()
 
     try:
-        # homogenus_chain_progression(5, 5)
-        # homogenus_chain_progression(5, 5)
-        # homogenus_chain_progression(5, 5)
-        # homogenus_chain_progression(5, 5)
-        # homogenus_chain_progression(5, 5)
+        
+#         ######################################################################################
+#         ######################### FIRST EXPERIMENTS -- CHAIN EVOLVE 5,5 ######################
+        
+#         dump_test(['FIRST CHAIN EVOLVE STARTED'])
+#         dump_evo(['************** FIRST CHAIN EVOLVE ADAPTATION RESULTS ************************'])
+#         chain_evolve(5, 5)
+#         dump_evo([''])
+#         dump_test([''])
+        
+#         dump_test(['SECOND CHAIN EVOLVE STARTED'])
+#         dump_evo(['************** SECOND CHAIN EVOLVE ADAPTATION RESULTS ***********************'])
+#         chain_evolve(5, 5)
+#         dump_evo([''])
+#         dump_test([''])
+        
+#         dump_test(['THIRD CHAIN EVOLVE STARTED'])
+#         dump_evo(['************** THIRD CHAIN EVOLVE ADAPTATION RESULTS ************************'])
+#         chain_evolve(5, 5)
+#         dump_evo([''])
+#         dump_test([''])
+        
+#         dump_test(['FOURTH CHAIN EVOLVE STARTED'])
+#         dump_evo(['************** FOURTH CHAIN EVOLVE ADAPTATION RESULTS ***********************'])
+#         chain_evolve(5, 5)
+#         dump_evo([''])
+#         dump_test([''])
+        
+#         dump_test(['FIFTH CHAIN EVOLVE STARTED'])
+#         dump_evo(['************** FIFTH CHAIN EVOLVE ADAPTATION RESULTS ************************'])
+#         chain_evolve(5, 5)
+#         dump_test([''])
+#         dump_test(['ALL CHAIN EVOLVE EXPERIMENTS COMPLETED'])
+#         dump_test([''])
+        
+#         #######################################################################################     
+        
+        
+#         #######################################################################################
+#         ########################## SECOND EXPERIMENTS -- STOCHASTIC ROUND ROBIN 5,5 ###########
+        
+#         dump_test(['FIRST ROUND ROBIN RANDOMIZED STARTED'])
+#         round_robin_randomized(5, 5)
+#         dump_test([''])
+        
+#         dump_test(['SECOND ROUND ROBIN RANDOMIZED STARTED'])
+#         round_robin_randomized(5, 5)
+#         dump_test([''])
+        
+#         dump_test(['THIRD ROUND ROBIN RANDOMIZED STARTED'])
+#         round_robin_randomized(5, 5)
+#         dump_test([''])
+        
+#         dump_test(['FOURTH ROUND ROBIN RANDOMIZED STARTED'])
+#         round_robin_randomized(5, 5)
+#         dump_test([''])
+        
+#         dump_test(['FIFTH ROUND ROBIN RANDOMIZED STARTED'])
+#         round_robin_randomized(5, 5)
+#         dump_test([''])
+#         dump_test(['ALL ROUND ROBIN RANDOMIZED EXPERIMENTS COMPLETED'])
+#         dump_test([''])
+        
+#         #######################################################################################
+               
+        
+#         #######################################################################################
+#         ########################## THIRD EXPERIMENTS -- DETERMINISTIC ROUND ROBIN 5,5 #########
+        
+#         dump_test(['FIRST ROUND ROBIN DETERMINISTIC STARTED'])
+#         round_robin_deterministic(5, 5)
+#         dump_test([''])
+        
+#         dump_test(['SECOND ROUND ROBIN DETERMINISTIC STARTED'])
+#         round_robin_deterministic(5, 5)
+#         dump_test([''])
+        
+#         dump_test(['THIRD ROUND ROBIN DETERMINISTIC STARTED'])
+#         round_robin_deterministic(5, 5)
+#         dump_test([''])
+        
+#         dump_test(['FOURTH ROUND ROBIN DETERMINISTIC STARTED'])
+#         round_robin_deterministic(5, 5)
+#         dump_test([''])
+        
+#         dump_test(['FIFTH ROUND ROBIN DETERMINISTIC STARTED'])
+#         round_robin_deterministic(5, 5)
+#         dump_test([''])
+#         dump_test(['ALL ROUND ROBIN DETERMINISTIC EXPERIMENTS COMPLETED'])
+#         dump_test([''])
+        
+#         #######################################################################################
+        
+        
+#         #######################################################################################
+#         ########################## FOURTH EXPERIMENTS -- BRUTE FORCE TRAINING 10,15 ###########
+        
+#         dump_test(['FIRST BRUTE FORCE STARTED'])
+#         brute_force_training(10, 15)
+#         dump_test([''])
+        
+#         dump_test(['SECOND BRUTE FORCE STARTED'])
+#         brute_force_training(10, 15)
+#         dump_test([''])
+        
+#         dump_test(['THIRD BRUTE FORCE STARTED'])
+#         brute_force_training(10, 15)
+#         dump_test([''])
+        
+#         dump_test(['FOURTH BRUTE FORCE STARTED'])
+#         brute_force_training(10, 15)
+#         dump_test([''])
+        
+#         dump_test(['FIFTH BRUTE FORCE STARTED'])
+#         brute_force_training(10, 15)
+#         dump_test([''])
+#         dump_test(['ALL ROUND BRUTE FORCE EXPERIMENTS COMPLETED'])
+        
+#         ######################################################################################
+        
 
-        # chain_progression(5, 5)
-        # chain_progression(5, 5)
-        # chain_progression(5, 5)
-        # chain_progression(5, 5)
-        # chain_progression(5, 5)
-
-        #dump_evo(['first chain evolve 3,3'])
-        chain_evolve(5, 5)
         
-        #dump_evo(['second chain evolve 3,3'])
-        #chain_evolve(3, 3)
-        
-        
-        '''
-        dump_evo(['first chain evolve with fit reset 3,3'])
-        chain_evolve_with_fitness_reset(3,3)
-        dump_evo(['second chain evolve with fit reset 3,3'])
-        chain_evolve_with_fitness_reset(3,3)
-        
-        dump_evo(['first round robin randomized 3,3'])
-        round_robin_randomized(3, 3)
-        dump_evo(['second round robin randomized 3,3'])
-        round_robin_randomized(3, 3)
-        
-        dump_evo(['first round robin deterministic 3,3'])
-        round_robin_deterministic(3, 3)
-        dump_evo(['second round robin deterministic 3,3'])
-        round_robin_deterministic(3, 3)
-        
-        dump_evo(['first brute force training 5,10'])
-        brute_force_training(5, 10)
-        dump_evo(['first brute force training 5,10'])
-        brute_force_training(5, 10)
-        
-        
-        
-        
-        chain_evolve_with_fitness_reset(3, 3) # here 3 by 3 too, but each time with different disc type (above only the 'base' type)
-        dump_test(['CHAIN EVOLVE WITH FITNESS RESET COMPLETED'])
-        
-        round_robin_randomized(5, 5)
-        dump_test(['ROUND ROBIN RANDOMIZED COMPLETED'])
-        
-        round_robin_deterministic(5, 5)
-        dump_test(['ROUND ROBIN DETERMINISTIC COMPLETED'])
-        
-        brute_force_training(10, 15)
-        dump_test(['BRUTE FORCE TRAINING COMPLETED'])
-        
-        
-        
-        
-        dump_test(['ROUND ROBIN RANDOMIZED 1 STARTED'])
-        round_robin_randomized(5, 5)
-        dump_test(['ROUND ROBIN RANDOMIZED 1 COMPLETED'])
-        round_robin_randomized(5, 5)
-        dump_test(['ROUND ROBIN RANDOMIZED 2 COMPLETED'])
-
-        dump_test(['ROUND ROBIN DETERMINISTIC 1 STARTED'])
-        round_robin_deterministic(5, 5)
-        dump_test(['ROUND ROBIN DETERMINISTIC 1 COMPLETED'])
-        round_robin_deterministic(5, 5)
-        dump_test(['ROUND ROBIN DETERMINISTIC 2 COMPLETED'])
-
-        dump_test(['BRUTE FORCE TRAINING 1 STARTED'])
-        brute_force_training(10, 15)
-        dump_test(['BRUTE FORCE TRAINING 1 COMPLETED'])
-        brute_force_training(10, 15)
-        dump_test(['BRUTE FORCE TRAINING 2 COMPLETED'])
-        brute_force_training(10, 15)
-        dump_test(['BRUTE FORCE TRAINING 3 COMPLETED'])
-        brute_force_training(10, 15)
-        dump_test(['BRUTE FORCE TRAINING 4 COMPLETED'])
-        brute_force_training(10, 15)
-        dump_test(['BRUTE FORCE TRAINING 5 COMPLETED'])
-
-        # brute_force_training(5, 30)
-        # brute_force_training(5, 30)
-        # brute_force_training(5, 30)
-        # brute_force_training(5, 30)
-        # brute_force_training(5, 30)
-
-        # tag_pair_accumulator = []
-        # with open('backflow.csv', 'r') as read_file:
-        #     reader = csv.reader(read_file, delimiter='\t')
-        #     for row in reader:
-        #         if len(row) > 0:
-        #             tag_pair_accumulator.append(row)
-        #
-        # match_from_tags(tag_pair_accumulator)
-
-        # match_from_tags([('W0247GHVV4', '7TRW7286CW')])
-
-        '''
         
         pass
 
     except Exception as exc:
         try:
             print('ERROR IN MAIN LOOP, PUT LOGGING CODE BACK FOR DEBUG [Amir]')
-            '''           
-            dump_test([logger.exception("1. EXCEPTION IN MAIN")])
-            dump_test([logger.debug("2. DEBUG IN MAIN")])
-            dump_test([logger.info("3. INFO IN MAIN")])
+                      
+#             dump_test([logger.exception("1. EXCEPTION IN MAIN")])
+#             dump_test([logger.debug("2. DEBUG IN MAIN")])
+#             dump_test([logger.info("3. INFO IN MAIN")])
             
-            logger.exception("1. EXCEPTION IN MAIN")
-            logger.debug("2. DEBUG IN MAIN")
-            logger.info("3. INFO IN MAIN")
+#             logger.exception("1. EXCEPTION IN MAIN")
+#             logger.debug("2. DEBUG IN MAIN")
+#             logger.info("3. INFO IN MAIN")
             
             
-            logger.error(exc, exc_info=True)'''
+#             logger.error(exc, exc_info=True)
         except (AttributeError, smtplib.SMTPServerDisconnected):
             smtp_error_bail_out()
         raise
