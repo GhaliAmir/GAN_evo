@@ -391,13 +391,17 @@ class Arena(object):
         pathogen_fitness = self.generator_instance.current_fitness
         self.discriminator_instance.real_error = trace[0]
         
+        host_fitness = self.discriminator_instance.current_fitness
+        
         
         
         # print('debug: inside match: host_fitness: %s, pathogen_fitness: %s' % (host_fitness, pathogen_fitness))
 
         
         # TODO: check for conflict with the decisions made inside the arena module
-        if pathogen_fitness > 1100:
+        if (pathogen_fitness > 1000) and (pathogen_fitness + 500 > host_fitness):
+            
+            
             # print('debug: inside match: contamination branch')  # contamination
             '''
             self.generator_instance.fitness_map = {

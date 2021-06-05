@@ -725,9 +725,9 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
         
         #EVO
         if arena.generator_instance.current_fitness > 1000 and\
-            arena.generator_instance.current_fitness + 400 > arena.discriminator_instance.current_fitness:
+            arena.generator_instance.current_fitness + 500 > arena.discriminator_instance.current_fitness:
             #For an infection to take place we need a minimum pathogen fitness of 1000 (otherwise considered too weak),
-            #and a difference in fitness between pathogen and host, for the latter to be infected, of maximum 400.
+            #and a difference in fitness between pathogen and host, for the latter to be infected, of maximum 500.
             
             
             #infection
