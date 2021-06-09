@@ -143,8 +143,8 @@ def extract_bruteforce_data(bruteforce_run):
     
     for data_dump_row in bruteforce_run[1]:
         if data_dump_row[0] == 'sampled images from':
-            is_collector.append(float(data_dump_row[-1]))                                     
-            fid_collector.append(float(data_dump_row[-2]))
+            is_collector.append(float(data_dump_row[-3]))
+            fid_collector.append(float(data_dump_row[-4]))
             tag_collector.append(data_dump_row[2])
         if data_dump_row[0] == 'post-cross-train and match:':
             # print('parsing bruteforce')
@@ -218,8 +218,8 @@ def extract_evo_data(chain_evolve_run):
         
         if entry[0] == 'sampled images from':
             # print(entry)
-                 
-            gen_fit_collector[int(entry[1])] = float(entry[-2]) #EVO   
+            
+            gen_fit_collector[int(entry[1])] = float(entry[-2]) #EVO   float(entry[-2])
             is_collector[int(entry[1])]  = float(entry[-3])
             fid_collector[int(entry[1])] = float(entry[-4])
             gen_tag_collector[int(entry[1])] = entry[2]
@@ -1648,6 +1648,10 @@ def render_training_history(method_names, disc_sweeps, gen_sweeps):
 
 
          
+    #gen_hard_sweeps = []
+    #disc_soft_sweeps = []
+    #disc_hard_sweeps = []
+    
     ##GENS FITNESS PROGRESSION PLOT
     for method, method_specific_tag_trace in zip(method_names, gen_fit_master_tag_trace):
         
@@ -1736,6 +1740,8 @@ if __name__ == "__main__":
     collector_list = []
     
 
+    #disc_sweeps = {}
+    #gen_sweeps = {}
     
     for i_1, entry in enumerate(master_table):
         # print(i_1, entry[0])
@@ -1782,8 +1788,11 @@ if __name__ == "__main__":
             disc_attribution_map[(sub_entry[0][1], sub_entry[0][2], sub_entry[0][3])][sub_entry[0][-1]] =\
                 [duration, extracted_fids, extracted_is, disc_fits, final_disc_tags]
 
-            
-            
+            '''
+            #EVOOOOO
+            brute_force_attribution_map[(sub_entry[0][1], sub_entry[0][2], sub_entry[0][3])][sub_entry[0][-1]] =\
+                [duration, extracted_fids, extracted_is, final_gen_tags]
+            '''
             
             #print('attribution_map[(sub_entry[0][1], sub_entry[0][2], sub_entry[0][3])][sub_entry[0][-1]]',\
                  #attribution_map[(sub_entry[0][1], sub_entry[0][2], sub_entry[0][3])][sub_entry[0][-1]])
@@ -1839,6 +1848,12 @@ if __name__ == "__main__":
         if key in disc_attribution_map.keys():
             del disc_attribution_map[key]
 
+    '''
+    for key in attribution_map_filter:
+        if key in brute_force_attribution_map.keys():
+            del brute_force_attribution_map[key]
+    '''
+    
     
     # new_attribution_map = {}
     #
@@ -1868,6 +1883,11 @@ if __name__ == "__main__":
     #                               method_names, best_fid_gen_tags)
 
     # print(attribution_map.keys())
+    
+    #gen_soft_sweeps = []
+    #gen_hard_sweeps = []
+    #disc_soft_sweeps = []
+    #disc_hard_sweeps = []
 
     gen_soft_sweeps, gen_hard_sweeps, disc_soft_sweeps, disc_hard_sweeps = render_training_history(method_names, disc_sweeps, gen_sweeps)
     
@@ -1876,4 +1896,3 @@ if __name__ == "__main__":
     render_fid_is_performances(gen_attribution_map, gen_soft_sweeps, gen_hard_sweeps, disc_soft_sweeps, disc_hard_sweeps)
     
     
-    print('EVERYTHING COMPLETED SUCCESSFULLY')
