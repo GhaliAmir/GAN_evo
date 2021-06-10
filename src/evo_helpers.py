@@ -37,13 +37,12 @@ def log_normal_aneuploidization(instance): #tested in 504 of "match_and_train.py
     mu = 0
     sigma = 0.5
     
-    with torch.no_grad():
-        for name, param in instance.named_parameters():
-            new_params[name] = param.clone()
-            if param.dim() == 4:
-                random_tensor = torch.from_numpy(np.random.lognormal(mu, sigma, param.size()))
-                new_params[name] = torch.matmul(new_params[name], random_tensor.float().to('cuda'))
-                param.data.copy_(new_params[name])
+    for name, param in instance.named_parameters():
+        new_params[name] = param.clone()
+        if param.dim() == 4:
+            random_tensor = torch.from_numpy(np.random.lognormal(mu, sigma, param.size()))
+            new_params[name] = torch.matmul(new_params[name], random_tensor.float().to('cuda'))
+            param.data.copy_(new_params[name])
             
 
     

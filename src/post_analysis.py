@@ -170,8 +170,8 @@ def extract_evo_data(chain_evolve_run):
     
     
     
-    gen_sweeps = {}
-    disc_sweeps = {}
+    #gen_sweeps = {}
+    #disc_sweeps = {}
     
     
     #EVO
@@ -224,13 +224,16 @@ def extract_evo_data(chain_evolve_run):
             fid_collector[int(entry[1])] = float(entry[-4])
             gen_tag_collector[int(entry[1])] = entry[2]
             
+            
+            
+            
+            
         #EVOOOO
         if entry[0] == 'against host':
             
             disc_fit_collector[int(entry[1])] = float(entry[-2]) #EVO
             
-            disc_tag_collector[int(entry[1])] = entry[2]
-     
+            disc_tag_collector[int(entry[1])] = entry[2]                 
     
     
     #EVO
@@ -245,6 +248,7 @@ def extract_evo_data(chain_evolve_run):
     
     #print('')
     #print('')
+    
     
     #With veeeeery small probability if disc was never chosen -- we should implement the same for the gens !
     for i in range(len(disc_fit_collector)):
@@ -379,6 +383,9 @@ def extract_evo_data(chain_evolve_run):
     #                 raise Exception('debug')
     #
     # raise Exception('other debug')
+    
+    #print('gen_tag_collector', gen_tag_collector)
+    #print('gen_sweeps', gen_sweeps)
 
     return disc_fit_collector, gen_fit_collector, is_collector, fid_collector, disc_tag_collector, gen_tag_collector, duration,\
            disc_sweeps, gen_sweeps
@@ -1133,7 +1140,16 @@ def render_training_history(method_names, disc_sweeps, gen_sweeps):
             
             
             #EVO
-            sweeps_state = [sweeps_data[tag] for tag, _, _, _, _ in line]
+            
+            sweeps_state = []
+            #print('sweeps_data: ', sweeps_data)
+            for tag, _, _, _, _ in line:
+                #print('tag: ', tag)
+                sweeps_state.append(sweeps_data[tag])
+                
+            
+            
+            #sweeps_state = [sweeps_data[tag] for tag, _, _, _, _ in line]
             
             
             
@@ -1679,6 +1695,10 @@ def render_training_history(method_names, disc_sweeps, gen_sweeps):
                 #print('gen_tags_trace ', gen_tags_trace)
                 #print('')
                 
+                print('gen_tags_trace', gen_tags_trace)
+                print('gen_sweeps', gen_sweeps)
+                
+                
                 
                 gen_soft_sweeps, gen_hard_sweeps = render_fitness_progression(method, gen_tags_trace, gen_sweeps)
                 plt.title('Fitness Progression - Pathogens Evolving')
@@ -1740,6 +1760,9 @@ if __name__ == "__main__":
     collector_list = []
     
 
+    gen_sweeps = {}
+    disc_sweeps = {}
+    
     #disc_sweeps = {}
     #gen_sweeps = {}
     
@@ -1778,6 +1801,9 @@ if __name__ == "__main__":
             #print('[duration, extracted_fids, final_random_tags]', [duration, extracted_fids, final_random_tags])
             
             
+            #EVOOOOOOOOOOOO -- 10.06
+            gen_sweeps.update(gen_sweeps)
+            disc_sweeps.update(disc_sweeps)
             
             
             #EVOOOs
