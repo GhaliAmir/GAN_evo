@@ -844,7 +844,9 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
             #no need to update these (not related here)            
             #arena.generator_instance.silent_adaptation = False
             #arena.discriminator_instance.silent_adaptation = False
-
+            
+            arena.discriminator_instance.gen_error_map.pop(arena.generator_instance.key, None)
+            
             pathogens_adaptation_check(arena.generator_instance)
             hosts_adaptation_check(arena.discriminator_instance)
 

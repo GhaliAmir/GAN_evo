@@ -1695,8 +1695,8 @@ def render_training_history(method_names, disc_sweeps, gen_sweeps):
                 #print('gen_tags_trace ', gen_tags_trace)
                 #print('')
                 
-                print('gen_tags_trace', gen_tags_trace)
-                print('gen_sweeps', gen_sweeps)
+                #print('gen_tags_trace', gen_tags_trace)
+                #print('gen_sweeps', gen_sweeps)
                 
                 
                 

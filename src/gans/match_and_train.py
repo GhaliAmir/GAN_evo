@@ -510,8 +510,9 @@ class Arena(object):
         #EVO -- should we take this before the train? (perturbations before the learning)
         #aneuploidization(self.generator_instance)
         #aneuploidization(self.discriminator_instance)
-        log_normal_aneuploidization(self.generator_instance)
-        log_normal_aneuploidization(self.discriminator_instance)
+        
+        #log_normal_aneuploidization(self.generator_instance)
+        #log_normal_aneuploidization(self.discriminator_instance)
     
         #EVO -- generation change
         print()
