@@ -886,7 +886,29 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
                         current_host_idx,
                         arena.discriminator_instance.current_fitness])
 
-    
+            
+            
+            
+            #EVOO - last
+            
+            arena.sample_images()
+            current_fid, current_is = calc_single_fid_is(arena.generator_instance.random_tag)
+
+            dump_trace(['sampled images from', current_pathogen_idx,
+                        arena.generator_instance.random_tag, current_fid, current_is, arena.generator_instance.current_fitness,\
+                        arena.generator_instance.state])
+            
+            
+            
+            
+            dump_trace(['against host',
+                        current_host_idx,
+                        arena.discriminator_instance.random_tag, arena.discriminator_instance.current_fitness,\
+                        arena.discriminator_instance.state])
+            
+            
+            
+            
     
     encountered_pathogens = []
     for (host_no, host), (pathogen_no, pathogen) in product(enumerate(hosts_list),
@@ -1002,7 +1024,7 @@ def chain_evolve(individuals_per_species, starting_cluster):
     #only base
     
     dump_evo([''])
-    cross_train_iteration(hosts, pathogens, 'base', 5, timer=timer)
+    cross_train_iteration(hosts, pathogens, 'base', 3, timer=timer)
     
     evolve_in_population(hosts['base'], pathogens, default_budget, timer=timer)
     dump_evo([''])
