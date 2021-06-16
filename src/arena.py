@@ -743,6 +743,15 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
                         current_host_idx,
                         arena.discriminator_instance.current_fitness])
 
+            
+            
+            
+            #EVOOO - last changes
+            arena.generator_instance.fitness_map[arena.discriminator_instance.key] = arena.generator_instance.current_fitness
+            
+            arena.discriminator_instance.gen_error_map[arena.generator_instance.key] = arena_match_results[1]
+            
+            
             #EVO
             if arena.discriminator_instance.current_fitness > arena.generator_instance.current_fitness + 150:
             #We consider the infection silent if the difference in fitness is more than 150, otherwise (if less) full.
@@ -845,7 +854,12 @@ def evolve_in_population(hosts_list, pathogens_list, pathogen_epochs_budget, fit
             #arena.generator_instance.silent_adaptation = False
             #arena.discriminator_instance.silent_adaptation = False
             
+            #EVOO - last changes
+            arena.generator_instance.fitness_map.pop(arena.discriminator_instance.key, None)
+            
             arena.discriminator_instance.gen_error_map.pop(arena.generator_instance.key, None)
+            
+            
             
             pathogens_adaptation_check(arena.generator_instance)
             hosts_adaptation_check(arena.discriminator_instance)
@@ -1341,41 +1355,41 @@ if __name__ == "__main__":
 
     try:
         
-#         ######################################################################################
-#         ######################### FIRST EXPERIMENTS -- CHAIN EVOLVE 5,5 ######################
+        ######################################################################################
+        ######################### FIRST EXPERIMENTS -- CHAIN EVOLVE 5,5 ######################
         
-#         dump_test(['FIRST CHAIN EVOLVE STARTED'])
-#         dump_evo(['************** FIRST CHAIN EVOLVE ADAPTATION RESULTS ************************'])
-#         chain_evolve(5, 5)
-#         dump_evo([''])
-#         dump_test([''])
+        dump_test(['FIRST CHAIN EVOLVE STARTED'])
+        dump_evo(['************** FIRST CHAIN EVOLVE ADAPTATION RESULTS ************************'])
+        chain_evolve(5, 5)
+        dump_evo([''])
+        dump_test([''])
         
-#         dump_test(['SECOND CHAIN EVOLVE STARTED'])
-#         dump_evo(['************** SECOND CHAIN EVOLVE ADAPTATION RESULTS ***********************'])
-#         chain_evolve(5, 5)
-#         dump_evo([''])
-#         dump_test([''])
+        dump_test(['SECOND CHAIN EVOLVE STARTED'])
+        dump_evo(['************** SECOND CHAIN EVOLVE ADAPTATION RESULTS ***********************'])
+        chain_evolve(5, 5)
+        dump_evo([''])
+        dump_test([''])
         
-#         dump_test(['THIRD CHAIN EVOLVE STARTED'])
-#         dump_evo(['************** THIRD CHAIN EVOLVE ADAPTATION RESULTS ************************'])
-#         chain_evolve(5, 5)
-#         dump_evo([''])
-#         dump_test([''])
+        dump_test(['THIRD CHAIN EVOLVE STARTED'])
+        dump_evo(['************** THIRD CHAIN EVOLVE ADAPTATION RESULTS ************************'])
+        chain_evolve(5, 5)
+        dump_evo([''])
+        dump_test([''])
         
-#         dump_test(['FOURTH CHAIN EVOLVE STARTED'])
-#         dump_evo(['************** FOURTH CHAIN EVOLVE ADAPTATION RESULTS ***********************'])
-#         chain_evolve(5, 5)
-#         dump_evo([''])
-#         dump_test([''])
+        dump_test(['FOURTH CHAIN EVOLVE STARTED'])
+        dump_evo(['************** FOURTH CHAIN EVOLVE ADAPTATION RESULTS ***********************'])
+        chain_evolve(5, 5)
+        dump_evo([''])
+        dump_test([''])
         
-#         dump_test(['FIFTH CHAIN EVOLVE STARTED'])
-#         dump_evo(['************** FIFTH CHAIN EVOLVE ADAPTATION RESULTS ************************'])
-#         chain_evolve(5, 5)
-#         dump_test([''])
-#         dump_test(['ALL CHAIN EVOLVE EXPERIMENTS COMPLETED'])
-#         dump_test([''])
+        dump_test(['FIFTH CHAIN EVOLVE STARTED'])
+        dump_evo(['************** FIFTH CHAIN EVOLVE ADAPTATION RESULTS ************************'])
+        chain_evolve(5, 5)
+        dump_test([''])
+        dump_test(['ALL CHAIN EVOLVE EXPERIMENTS COMPLETED'])
+        dump_test([''])
         
-#         #######################################################################################     
+        #######################################################################################     
         
         
 #         #######################################################################################
